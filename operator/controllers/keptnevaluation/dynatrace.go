@@ -30,7 +30,7 @@ type DynatraceData struct {
 	Values     []*float64 `json:"values"`
 }
 
-func (d *KeptnDynatraceProvider) queryEvaluation(objective *klcv1alpha1.Objective, provider klcv1alpha1.KeptnEvaluationProvider) (string, error) {
+func (d *KeptnDynatraceProvider) EvaluateQuery(objective *klcv1alpha1.Objective, provider klcv1alpha1.KeptnEvaluationProvider) (string, error) {
 	qURL := provider.Spec.TargetServer + "/api/v2/metrics/query?metricSelector=" + objective.Query
 
 	d.Log.Info("Running query: " + qURL)

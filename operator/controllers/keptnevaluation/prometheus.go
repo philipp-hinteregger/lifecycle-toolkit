@@ -16,7 +16,7 @@ type KeptnPrometheusProvider struct {
 	Log logr.Logger
 }
 
-func (r *KeptnPrometheusProvider) queryEvaluation(objective klcv1alpha1.Objective, provider klcv1alpha1.KeptnEvaluationProvider) (string, error) {
+func (r *KeptnPrometheusProvider) EvaluateQuery(objective klcv1alpha1.Objective, provider klcv1alpha1.KeptnEvaluationProvider) (string, error) {
 	queryTime := time.Now().UTC()
 	r.Log.Info("Running query: /api/v1/query?query=" + objective.Query + "&time=" + queryTime.String())
 

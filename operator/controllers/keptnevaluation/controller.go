@@ -52,7 +52,7 @@ type KeptnEvaluationReconciler struct {
 }
 
 type KeptnSLIProvider interface {
-	queryEvaluation(objective klcv1alpha1.Objective, provider klcv1alpha1.KeptnEvaluationProvider) (string, error)
+	EvaluateQuery(objective klcv1alpha1.Objective, provider klcv1alpha1.KeptnEvaluationProvider) (string, error)
 }
 
 //+kubebuilder:rbac:groups=lifecycle.keptn.sh,resources=keptnevaluations,verbs=get;list;watch;create;update;patch;delete
@@ -100,11 +100,10 @@ func (r *KeptnEvaluationReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 
 	if evaluation.Status.RetryCount >= evaluation.Spec.Retries {
 		r.recordEvent("Warning", evaluation, "ReconcileTimeOut", "retryCount exceeded")
-		err := fmt.Errorf("retryCount for evaluation exceeded")
-		span.SetStatus(codes.Error, err.Error())
+		span.SetStatus(codes.Error, "retryCount for evaluation exceeded")
 		evaluation.Status.OverallStatus = common.StateFailed
-		r.updateFinishedEvaluationMetrics(ctx, evaluation, span)
-		return ctrl.Result{}, nil
+		err := r.updateFinishedEvaluationMetrics(ctx, evaluation, span)
+		return ctrl.Result{}, err
 	}
 
 	if !evaluation.Status.OverallStatus.IsSucceeded() {
@@ -161,7 +160,7 @@ func (r *KeptnEvaluationReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 				continue
 			}
 			// resolving the SLI value
-			value, err := provider.queryEvaluation(query, *evaluationProvider)
+			value, err := provider.EvaluateQuery(query, *evaluationProvider)
 			statusItem := &klcv1alpha1.EvaluationStatusItem{
 				Value:  value,
 				Status: common.StateSucceeded,
@@ -170,7 +169,7 @@ func (r *KeptnEvaluationReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 				statusItem.Message = err.Error()
 				statusItem.Status = common.StateFailed
 			}
-
+			// Evaluating SLO
 			check, err := checkValue(query, statusItem)
 
 			if err != nil {
