@@ -2,6 +2,7 @@ package keptnevaluation
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/go-logr/logr"
 	klcv1alpha1 "github.com/keptn-sandbox/lifecycle-controller/operator/api/v1alpha1"
 	"io"
@@ -25,8 +26,8 @@ type DynatraceResult struct {
 }
 
 type DynatraceData struct {
-	Timestamps []int64  `json:"timestamps"`
-	Values     []*int64 `json:"values"`
+	Timestamps []int64    `json:"timestamps"`
+	Values     []*float64 `json:"values"`
 }
 
 func (d *KeptnDynatraceProvider) queryEvaluation(objective *klcv1alpha1.Objective, provider klcv1alpha1.KeptnEvaluationProvider) (string, error) {
@@ -54,11 +55,11 @@ func (d *KeptnDynatraceProvider) queryEvaluation(objective *klcv1alpha1.Objectiv
 		return "", err
 	}
 
-	return string(d.getSingleValue(result)), nil
+	return fmt.Sprintf("%f", d.getSingleValue(result)), nil
 }
 
-func (d *KeptnDynatraceProvider) getSingleValue(result DynatraceResponse) int64 {
-	var sum int64 = 0
+func (d *KeptnDynatraceProvider) getSingleValue(result DynatraceResponse) float64 {
+	var sum float64 = 0
 	var count int64 = 0
 	for _, r := range result.Result {
 		for _, points := range r.Data {
@@ -73,5 +74,5 @@ func (d *KeptnDynatraceProvider) getSingleValue(result DynatraceResponse) int64 
 	if count < 1 {
 		return 0
 	}
-	return sum / count
+	return sum / float64(count)
 }
