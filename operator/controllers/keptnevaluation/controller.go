@@ -52,7 +52,7 @@ type KeptnEvaluationReconciler struct {
 }
 
 type KeptnSLIProvider interface {
-	queryEvaluation(objective klcv1alpha1.Objective, provider klcv1alpha1.KeptnEvaluationProvider) *klcv1alpha1.EvaluationStatusItem
+	queryEvaluation(objective klcv1alpha1.Objective, provider klcv1alpha1.KeptnEvaluationProvider) (string, error)
 }
 
 //+kubebuilder:rbac:groups=lifecycle.keptn.sh,resources=keptnevaluations,verbs=get;list;watch;create;update;patch;delete
@@ -141,6 +141,7 @@ func (r *KeptnEvaluationReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 			span.SetStatus(codes.Error, err.Error())
 			return ctrl.Result{Requeue: false}, err
 		}
+		r.Log.Info("Metric Provider selected: " + evaluationDefinition.Spec.Source)
 
 		statusSummary := common.StatusSummary{}
 		statusSummary.Total = len(evaluationDefinition.Spec.Objectives)
@@ -159,7 +160,26 @@ func (r *KeptnEvaluationReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 				newStatus[query.Name] = evaluation.Status.EvaluationStatus[query.Name]
 				continue
 			}
-			statusItem := provider.queryEvaluation(query, *evaluationProvider)
+			// resolving the SLI value
+			value, err := provider.queryEvaluation(query, *evaluationProvider)
+			statusItem := &klcv1alpha1.EvaluationStatusItem{
+				Value:  value,
+				Status: common.StateSucceeded,
+			}
+			if err != nil {
+				statusItem.Message = err.Error()
+				statusItem.Status = common.StateFailed
+			}
+
+			check, err := checkValue(query, statusItem)
+
+			if err != nil {
+				statusItem.Message = err.Error()
+				r.Log.Error(err, "Could not check query result")
+			}
+			if check {
+				statusItem.Status = common.StateSucceeded
+			}
 			statusSummary = common.UpdateStatusSummary(statusItem.Status, statusSummary)
 			newStatus[query.Name] = *statusItem
 		}
