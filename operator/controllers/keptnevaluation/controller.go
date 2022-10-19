@@ -19,6 +19,7 @@ package keptnevaluation
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"strings"
 	"time"
 
@@ -130,8 +131,9 @@ func (r *KeptnEvaluationReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 				Log: r.Log,
 			}
 		case "dynatrace":
-			provider = &KeptnPrometheusProvider{
-				Log: r.Log,
+			provider = &KeptnDynatraceProvider{
+				client: http.Client{},
+				Log:    r.Log,
 			}
 		default:
 			r.recordEvent("Error", evaluation, "ProviderNotFound", "evaluation provider was not found")
@@ -163,7 +165,7 @@ func (r *KeptnEvaluationReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 			value, err := provider.EvaluateQuery(query, *evaluationProvider)
 			statusItem := &klcv1alpha1.EvaluationStatusItem{
 				Value:  value,
-				Status: common.StateSucceeded,
+				Status: common.StateFailed,
 			}
 			if err != nil {
 				statusItem.Message = err.Error()
@@ -171,7 +173,6 @@ func (r *KeptnEvaluationReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 			}
 			// Evaluating SLO
 			check, err := checkValue(query, statusItem)
-
 			if err != nil {
 				statusItem.Message = err.Error()
 				r.Log.Error(err, "Could not check query result")
