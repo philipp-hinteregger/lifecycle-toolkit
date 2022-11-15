@@ -12,6 +12,7 @@ ARCH?=amd64
 integration-test:
 	kubectl kuttl test --start-kind=false ./test/integration/ --config=kuttl-test.yaml
 
+
 .PHONY: cleanup-manifests
 cleanup-manifests:
 	rm -rf manifests
