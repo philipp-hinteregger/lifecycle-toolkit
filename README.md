@@ -13,6 +13,7 @@ It is an incubating project, under the umbrella of the [Keptn Application Lifecy
 
 ## Watch the KubeCon 2022 Detroit Demo
 
+
 Click to watch it on YouTube:
 
 [![Keptn Lifecycle Toolkit in a Nutshell](https://img.youtube.com/vi/K-cvnZ8EtGc/0.jpg)](https://www.youtube.com/watch?v=K-cvnZ8EtGc)
