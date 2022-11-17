@@ -7,6 +7,7 @@ jobs:
     name: reviewdog
     runs-on: ubuntu-22.04
     strategy:
+      fail-fast: false
       matrix:
         config:
           - name: "keptn-lifecycle-operator"
@@ -25,3 +26,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           fail_on_error: true
           go_version: "1.19"
+          level: warning
