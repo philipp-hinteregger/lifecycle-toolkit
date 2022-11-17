@@ -15,4 +15,4 @@ jobs:
         with:
           fail_on_error: true
           level: warning
-          golangci_lint_flags: "--enable-all --exclude-use-default=false"
+          golangci_lint_flags: "--enable-all --exclude-use-default=false ."
