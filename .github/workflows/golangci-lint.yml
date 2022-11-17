@@ -27,4 +27,4 @@ jobs:
         with:
           working-directory: ${{ matrix.config.folder }}
           version: ${{ env.GOLANGCI_LINT_VERSION }}
-          args: --timeout 5m -E gofmt
+          args: --timeout 5m -E gofmt,containedctx,dogsled,errorlint,gci,nilnil,noctx
