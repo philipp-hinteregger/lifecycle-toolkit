@@ -22,4 +22,4 @@ jobs:
         with:
           workdir: ${{ matrix.config.folder }}
           fail_on_error: true
-          golangci_lint_flags: "--enable-all --exclude-use-default=false --timeout 5m"
+          golangci_lint_flags: "--timeout 5m"
