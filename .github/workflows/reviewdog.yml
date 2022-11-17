@@ -6,9 +6,18 @@ jobs:
   reviewdog:
     name: reviewdog
     runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        config:
+          - name: "keptn-lifecycle-operator"
+            folder: "operator/"
+          - name: "scheduler"
+            folder: "scheduler/"
     steps:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v3
 
       - name: golangci-lint
         uses: reviewdog/action-golangci-lint@v2
+        with:
+          workdir: ${{ matrix.config.folder }}
