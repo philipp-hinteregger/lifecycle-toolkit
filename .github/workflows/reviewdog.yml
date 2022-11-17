@@ -21,3 +21,4 @@ jobs:
         uses: reviewdog/action-golangci-lint@v2
         with:
           workdir: ${{ matrix.config.folder }}
+          golangci_lint_flags: "--enable-all --exclude-use-default=false --timeout 5m"
