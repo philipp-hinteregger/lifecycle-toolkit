@@ -1,9 +1,9 @@
-name: reviewdog
+name: golangci-lint
 on: pull_request
 env:
-  GOLANGCI_LINT_VERSION: v.1.50.1
+  GOLANGCI_LINT_VERSION: "v1.50.1"
 jobs:
-  reviewdog:
+  golangci-lint:
     name: reviewdog
     runs-on: ubuntu-22.04
     strategy:
@@ -17,12 +17,13 @@ jobs:
     steps:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v3
+      
+      - uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
 
       - name: golangci-lint
-        uses: reviewdog/action-golangci-lint@v2
+        uses: golangci/golangci-lint-action@v3
         with:
-          workdir: ${{ matrix.config.folder }}
-          golangci_lint_flags: "--enable-all --timeout 5m"
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          fail_on_error: true
-          go_version: "1.19"
+          working-directory: ${{ matrix.config.folder }}
+          version: ${{ env.GOLANGCI_LINT_VERSION }}
