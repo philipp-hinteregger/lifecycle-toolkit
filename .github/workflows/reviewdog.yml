@@ -22,3 +22,6 @@ jobs:
         with:
           workdir: ${{ matrix.config.folder }}
           golangci_lint_flags: "--enable-all --exclude-use-default=false --timeout 5m"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_error: true
+          go_version: "1.19"
