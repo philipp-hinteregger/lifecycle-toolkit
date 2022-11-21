@@ -3,8 +3,8 @@ run:
   go: '1.19'
 linters:
   enable:
-    - gofmt
     - containedctx
+    - gofmt
 #    - dogsled
 #    - errorlint
 #    - gci
