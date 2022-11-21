@@ -2,6 +2,7 @@ run:
   timeout: 5m
   go: '1.19'
 linters:
+  disable-all: true
   enable:
     - containedctx
     - gofmt
@@ -10,9 +11,3 @@ linters:
 #    - gci
 #    - nilnil
 #    - noctx
-exclude-rules:
-  # Independently of option `exclude` we use default exclude patterns,
-  # it can be disabled by this option.
-  # To list all excluded by default patterns execute `golangci-lint run --help`.
-  # Default: true.
-  exclude-use-default: false
