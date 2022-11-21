@@ -7,7 +7,7 @@ linters:
     - containedctx
     - gofmt
     - dogsled
-    - gci
-#    - errorlint
+    - errorlint
+#    - gci
 #    - nilnil
 #    - noctx
