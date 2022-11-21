@@ -8,6 +8,6 @@ linters:
     - gofmt
     - containedctx
     - errorlint
-#    - gci
-#    - nilnil
-#    - noctx
+    - gci
+    - nilnil
+    - noctx
