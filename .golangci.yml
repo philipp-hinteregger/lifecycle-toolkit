@@ -5,7 +5,7 @@ linters:
   enable:
     - containedctx
     - gofmt
-#    - dogsled
+    - dogsled
 #    - errorlint
 #    - gci
 #    - nilnil
