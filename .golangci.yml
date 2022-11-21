@@ -1,0 +1,12 @@
+run:
+  timeout: 5m
+  go: '1.19'
+linters:
+  enable:
+    - dogsled
+    - gofmt
+    - containedctx
+    - errorlint
+    - gci
+    - nilnil
+    - noctx
