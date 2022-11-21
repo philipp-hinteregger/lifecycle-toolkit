@@ -5,9 +5,9 @@ linters:
   disable-all: true
   enable:
     - dogsled
-#    - gofmt
-#    - containedctx
-#    - errorlint
+    - gofmt
+    - containedctx
+    - errorlint
 #    - gci
 #    - nilnil
 #    - noctx
