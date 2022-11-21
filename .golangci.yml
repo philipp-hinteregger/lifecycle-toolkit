@@ -8,5 +8,5 @@ linters:
     - dogsled
     - errorlint
 #    - gci
-#    - nilnil
+    - nilnil
 #    - noctx
