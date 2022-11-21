@@ -22,11 +22,32 @@ jobs:
         with:
           go-version: 1.19
 
-      - name: golangci-lint
+      - name: Default golangci-lint check
         uses: golangci/golangci-lint-action@v3
         with:
           working-directory: ${{ matrix.config.folder }}
           version: ${{ env.GOLANGCI_LINT_VERSION }}
-          args: --config ../.golangci.yml
+          args: --timeout 5m
+
+      - name: golangci-lint gofmt
+        uses: golangci/golangci-lint-action@v3
+        with:
+          working-directory: ${{ matrix.config.folder }}
+          version: ${{ env.GOLANGCI_LINT_VERSION }}
+          args: --timeout 5m -E gofmt
+
+      - name: golangci-lint containedctx
+        uses: golangci/golangci-lint-action@v3
+        with:
+          working-directory: ${{ matrix.config.folder }}
+          version: ${{ env.GOLANGCI_LINT_VERSION }}
+          args: --timeout 5m -E containedctx
+
+#      - name: golangci-lint gofmt
+#        uses: golangci/golangci-lint-action@v3
+#        with:
+#          working-directory: ${{ matrix.config.folder }}
+#          version: ${{ env.GOLANGCI_LINT_VERSION }}
+#          args: --config ../.golangci.yml
           #args: --timeout 5m -E gofmt -E containedctx
           #args: --timeout 5m -E containedctx -E dogsled -E errorlint -E gci -E nilnil -E noctx -E gofmt
