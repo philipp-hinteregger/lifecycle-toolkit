@@ -7,6 +7,6 @@ linters:
     - gofmt
     - dogsled
     - errorlint
-#    - gci
-#    - nilnil
-#    - noctx
+    - gci
+    - nilnil
+    - noctx
