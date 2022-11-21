@@ -9,4 +9,4 @@ linters:
     - errorlint
 #    - gci
     - nilnil
-#    - noctx
+    - noctx
