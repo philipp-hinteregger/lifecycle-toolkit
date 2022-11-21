@@ -2,6 +2,7 @@ name: golangci-lint
 on: pull_request
 env:
   GOLANGCI_LINT_VERSION: "v1.50.1"
+  GO_VERSION: "1.19"
 jobs:
   golangci-lint:
     name: golangci-lint
@@ -20,36 +21,12 @@ jobs:
       
       - uses: actions/setup-go@v3
         with:
-          go-version: 1.19
+          go-version: ${{ env.GO_VERSION }}
 
-      - name: Default golangci-lint check
+      - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
           working-directory: ${{ matrix.config.folder }}
           version: ${{ env.GOLANGCI_LINT_VERSION }}
-          args: --timeout 5m
-
-      - name: golangci-lint gofmt
-        uses: golangci/golangci-lint-action@v3
-        if: always()
-        with:
-          working-directory: ${{ matrix.config.folder }}
-          version: ${{ env.GOLANGCI_LINT_VERSION }}
-          args: --timeout 5m --disable-all -E gofmt
-
-      - name: golangci-lint containedctx
-        uses: golangci/golangci-lint-action@v3
-        if: always()
-        with:
-          working-directory: ${{ matrix.config.folder }}
-          version: ${{ env.GOLANGCI_LINT_VERSION }}
-          args: --timeout 5m --disable-all -E containedctx
-
-#      - name: golangci-lint gofmt
-#        uses: golangci/golangci-lint-action@v3
-#        with:
-#          working-directory: ${{ matrix.config.folder }}
-#          version: ${{ env.GOLANGCI_LINT_VERSION }}
-#          args: --config ../.golangci.yml
-          #args: --timeout 5m -E gofmt -E containedctx
+          args: --config ../.golangci.yml
           #args: --timeout 5m -E containedctx -E dogsled -E errorlint -E gci -E nilnil -E noctx -E gofmt
