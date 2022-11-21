@@ -31,17 +31,19 @@ jobs:
 
       - name: golangci-lint gofmt
         uses: golangci/golangci-lint-action@v3
+        if: always()
         with:
           working-directory: ${{ matrix.config.folder }}
           version: ${{ env.GOLANGCI_LINT_VERSION }}
-          args: --timeout 5m -E gofmt
+          args: --timeout 5m --disable-all -E gofmt
 
       - name: golangci-lint containedctx
         uses: golangci/golangci-lint-action@v3
+        if: always()
         with:
           working-directory: ${{ matrix.config.folder }}
           version: ${{ env.GOLANGCI_LINT_VERSION }}
-          args: --timeout 5m -E containedctx
+          args: --timeout 5m --disable-all -E containedctx
 
 #      - name: golangci-lint gofmt
 #        uses: golangci/golangci-lint-action@v3
