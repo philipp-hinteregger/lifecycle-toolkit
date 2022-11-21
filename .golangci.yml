@@ -3,10 +3,10 @@ run:
   go: '1.19'
 linters:
   enable:
-    - containedctx
-    - dogsled
-    - errorlint
-    - gci
-    - nilnil
-    - noctx
     - gofmt
+#    - containedctx
+#    - dogsled
+#    - errorlint
+#    - gci
+#    - nilnil
+#    - noctx
