@@ -4,10 +4,10 @@ run:
 linters:
   disable-all: true
   enable:
+    - errorlint
     - containedctx
     - gofmt
     - dogsled
-    - errorlint
 #    - gci
 #    - nilnil
 #    - noctx
