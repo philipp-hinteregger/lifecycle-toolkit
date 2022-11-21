@@ -4,12 +4,12 @@ run:
 linters:
   enable:
     - containedctx
-    - gofmt
-    - dogsled
-    - errorlint
+#    - gofmt
+#    - dogsled
+#    - errorlint
 #    - gci
-    - nilnil
-    - noctx
+#    - nilnil
+#    - noctx
 exclude-rules:
   # Independently of option `exclude` we use default exclude patterns,
   # it can be disabled by this option.
