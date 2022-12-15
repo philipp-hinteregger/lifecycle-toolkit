@@ -8,8 +8,6 @@ on:
         required: true
 env:
   GO_VERSION: "~1.19"
-  # renovate: datasource=github-releases depName=cert-manager/cert-manager
-  CERT_MANAGER_VERSION: "v1.10.0"
 defaults:
   run:
     shell: bash
@@ -32,7 +30,6 @@ jobs:
       - name: Setup cluster
         uses: ./.github/actions/deploy-klt-on-cluster
         with:
-          cert-manager-version: ${{ env.CERT_MANAGER_VERSION }}
           functions_runtime_tag: ${{ inputs.functions_runtime_tag }}
 
       - name: Run E2E Tests ${{ matrix.config.name }}

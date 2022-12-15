@@ -2,15 +2,19 @@ name: "Deploy Keptn Lifecycle Toolkit on GH cluster"
 description: "Creates a Kind cluster and deploys Keptn Lifecycle Toolkit"
 inputs:
    cert-manager-version:
-     required: true
+     required: false
      description: "Version of cert-manager that should be deployed"
+     # renovate: datasource=github-releases depName=cert-manager/cert-manager
+     default: "v1.10.0"
    kind-version:
      required: false
      description: "Version of kind that should be used"
+     # renovate: datasource=github-releases depName=kubernetes-sigs/kind
      default: "v0.17.0"
    k8s-version:
      required: false
      description: "Kubernetes that should be used"
+     # renovate: datasource=github-releases depName=kubernetes/kubernetes
      default: "v1.26.0"
    functions_runtime_tag:
      description: "Tag for the functions runner image"
@@ -36,7 +40,7 @@ runs:
     with:
       cluster_name: test-cluster
       version: ${{ inputs.kind-version }}
-      node_image: ${{ inputs.k8s-version }}
+      node_image: "kindest/node:${{ inputs.k8s-version }}"
       kubectl_version: ${{ inputs.k8s-version }}
 
   - name: Import images in k3d
