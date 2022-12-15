@@ -12,11 +12,51 @@ env:
   GO_VERSION: "~1.19"
 
 jobs:
+  prepare-security-scans:
+    name: "Prepare Security Scans"
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Find latest successful run ID
+        id: last_run_id
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_SLUG: "keptn/lifecycle-toolkit"
+        run: |
+          RUN_ID=$(\
+            curl -sL \
+              -H 'Accept: application/vnd.github.v3+json' \
+              -H "Authorization: token $GITHUB_TOKEN" \
+              "api.github.com/repos/$REPO_SLUG/actions/workflows/CI.yml/runs?branch=main" | \
+            jq '[.workflow_runs[] | select(
+              (.head_commit != null) and (.head_commit.author.name | endswith("[bot]") | not ) and ( .conclusion == "success" ) 
+            )][0] | .id')
+          # here we skip BOT PRs because they don't build artifacts
+          # Secrets are not there in the builds so there is no artifact pushed and retagged
+          echo "Run ID that will be used to download artifacts from: $RUN_ID"
+          echo "RUN_ID=$RUN_ID" >> $GITHUB_OUTPUT
+
+      # download artifacts from the specified branch with event type push (e.g., push to master/release branch)
+      - name: Download all artifacts from last successful build of specified branch
+        uses: dawidd6/action-download-artifact@v2.24.2
+        id: download_artifacts_push
+        with:
+          # Download last successful artifact from a CI build
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: CI.yml
+          run_id: ${{ steps.last_run_id.outputs.RUN_ID }}
+          # directory where to extract artifacts to
+          path: ./dist
+
+      - name: Upload manifests
+        uses: actions/upload-artifact@v3
+        with:
+          name: manifests
+          path: ./dist/**/*manifest
+
   security-scans:
     name: "Security Scans"
-    runs-on: ubuntu-20.04
-    env:
-      CHART_TO_SCAN: "scans/scan-tpl.yml"
+    needs: prepare-security-scans
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -42,11 +82,18 @@ jobs:
           fetch-depth: 0
           submodules: 'true'
 
+      - name: Download helm template
+        id: download_helm_chart
+        uses: actions/download-artifact@v3
+        with:
+          name: manifests
+          path: scans
+
       - name: KICS Scan
         if: matrix.tool == 'kics'
         uses: Checkmarx/kics-github-action@v1.6
         with:
-          path: ${{ env.CHART_TO_SCAN }}
+          path: scans
           config_path: .github/kics-config.yml
           fail_on: high,medium
           output_formats: json,sarif
@@ -65,7 +112,7 @@ jobs:
           go install github.com/yannh/kubeconform/cmd/kubeconform@v0.4.13
           echo "::endgroup::"
 
-          kubeconform -schema-location default -summary ${{ env.CHART_TO_SCAN }}
+          kubeconform -schema-location default -summary scans
 
       - name: Kubescape Scan
         if: matrix.tool == 'kubescape'
