@@ -54,8 +54,8 @@ jobs:
         with:
           name: manifests
           path: |
-            ./dist/keptn-lifecycle-operator-manifest 
-            ./dist/scheduler-manifest
+            ./dist/keptn-lifecycle-operator-manifest/keptn-lifecycle-operator-manifest  
+            ./dist/scheduler-manifest/scheduler-manifest
 
   security-scans:
     name: "Security Scans"

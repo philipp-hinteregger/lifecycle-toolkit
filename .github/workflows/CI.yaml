@@ -157,7 +157,7 @@ jobs:
         if: matrix.config.name != 'functions-runtime'
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ matrix.config.name }}-manifest-test
+          name: ${{ matrix.config.name }}-manifest
           path: ${{ matrix.config.folder }}/config/rendered/release.yaml
 
   component_tests:
