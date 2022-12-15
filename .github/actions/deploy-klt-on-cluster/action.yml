@@ -7,7 +7,7 @@ inputs:
    kind-version:
      required: false
      description: "Version of kind that should be used"
-     default: "v1.5.0"
+     default: "v0.17.0"
    k8s-version:
      required: false
      description: "Kubernetes that should be used"
