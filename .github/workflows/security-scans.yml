@@ -47,16 +47,15 @@ jobs:
 
       - name: Debug
         run: |
-          echo $(ls ./dist/keptn-lifecycle-operator-manifest)
-          echo $(ls ./dist/scheduler-manifest)
+          echo $(ls -lah ./dist)
 
       - name: Upload manifests
         uses: actions/upload-artifact@v3
         with:
           name: manifests
           path: |
-            ./dist/keptn-lifecycle-operator-manifest/keptn-lifecycle-operator-manifest 
-            ./dist/scheduler-manifest/scheduler-manifest
+            ./dist/keptn-lifecycle-operator-manifest 
+            ./dist/scheduler-manifest
 
   security-scans:
     name: "Security Scans"
