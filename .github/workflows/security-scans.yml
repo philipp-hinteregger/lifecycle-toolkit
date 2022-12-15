@@ -42,7 +42,6 @@ jobs:
           # Download last successful artifact from a CI build
           github_token: ${{secrets.GITHUB_TOKEN}}
           workflow: CI.yaml
-          branch: main
           run_id: ${{ steps.last_run_id.outputs.RUN_ID }}
           # directory where to extract artifacts to
           path: ./dist
