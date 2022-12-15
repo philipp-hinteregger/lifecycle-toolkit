@@ -20,7 +20,8 @@ jobs:
         id: last_run_id
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO_SLUG: "keptn/lifecycle-toolkit"
+          # change this
+          REPO_SLUG: "philipp-hinteregger/lifecycle-toolkit"
         run: |
           RUN_ID=$(\
             curl -sL \
