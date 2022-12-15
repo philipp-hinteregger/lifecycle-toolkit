@@ -53,7 +53,9 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: manifests
-          path: ./dist/*manifest
+          path: |
+            ./dist/keptn-lifecycle-operator-manifest /keptn-lifecycle-operator-manifest 
+            ./dist/scheduler-manifest
 
   security-scans:
     name: "Security Scans"
