@@ -47,7 +47,7 @@ jobs:
 
       - name: Debug
         run: |
-          echo $(ls -lah ./dist)
+          echo $(ls -lah ./dist/keptn-lifecycle-operator-manifest)
 
       - name: Upload manifests
         uses: actions/upload-artifact@v3
