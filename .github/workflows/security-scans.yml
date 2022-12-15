@@ -42,13 +42,6 @@ jobs:
           fetch-depth: 0
           submodules: 'true'
 
-      - name: Download helm template
-        id: download_helm_chart
-        uses: actions/download-artifact@v3
-        with:
-          name: rendered-helm-chart
-          path: scans
-
       - name: KICS Scan
         if: matrix.tool == 'kics'
         uses: Checkmarx/kics-github-action@v1.6
