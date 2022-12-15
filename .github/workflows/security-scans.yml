@@ -45,10 +45,6 @@ jobs:
           # directory where to extract artifacts to
           path: ./dist
 
-      - name: Debug
-        run: |
-          echo $(ls -lah ./dist/keptn-lifecycle-operator-manifest)
-
       - name: Upload manifests
         uses: actions/upload-artifact@v3
         with:
@@ -86,7 +82,7 @@ jobs:
           fetch-depth: 0
           submodules: 'true'
 
-      - name: Download helm template
+      - name: Download manifest files
         id: download_helm_chart
         uses: actions/download-artifact@v3
         with:
@@ -127,7 +123,7 @@ jobs:
           curl -s https://raw.githubusercontent.com/armosec/kubescape/master/install.sh | /bin/bash
           echo "::endgroup::"
           # Docs on how to configure exceptions: https://hub.armosec.io/docs/exceptions
-          kubescape scan framework ${{ matrix.kubescape-framework }} -v -t ${{ env.FAILURE_PERCENTAGE }} --exceptions ./.github/.kubescape/exceptions.json --controls-config ./.github/.kubescape/controls-inputs.json ${{ env.CHART_TO_SCAN }} --enable-color
+          kubescape scan framework ${{ matrix.kubescape-framework }} -v -t ${{ env.FAILURE_PERCENTAGE }} --exceptions ./.github/.kubescape/exceptions.json --controls-config ./.github/.kubescape/controls-inputs.json scans --enable-color
 
   govulncheck:
     name: Govulncheck
