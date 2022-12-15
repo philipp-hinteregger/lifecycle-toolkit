@@ -26,7 +26,7 @@ jobs:
             curl -sL \
               -H 'Accept: application/vnd.github.v3+json' \
               -H "Authorization: token $GITHUB_TOKEN" \
-              "api.github.com/repos/$REPO_SLUG/actions/workflows/CI.yml/runs?branch=main" | \
+              "api.github.com/repos/$REPO_SLUG/actions/workflows/CI.yaml/runs?branch=main" | \
             jq '[.workflow_runs[] | select(
               (.head_commit != null) and (.head_commit.author.name | endswith("[bot]") | not ) and ( .conclusion == "success" ) 
             )][0] | .id')
