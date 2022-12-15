@@ -45,7 +45,7 @@ runs:
       for image in $(ls | grep image.tar);
       do
         echo "Importing image: $image"
-        kind load $image/$image
+        kind load image-archive $image/$image -n test-cluster
       done
   
   - name: Install cert-manager
