@@ -36,6 +36,7 @@ runs:
     with:
       cluster_name: test-cluster
       version: ${{ inputs.kind-version }}
+      node_image: ${{ inputs.k8s-version }}
       kubectl_version: ${{ inputs.k8s-version }}
 
   - name: Import images in k3d
