@@ -53,6 +53,15 @@ jobs:
             ./dist/keptn-lifecycle-operator-manifest/
             ./dist/scheduler-manifest/
 
+      - name: Upload images
+        uses: actions/upload-artifact@v3
+        with:
+          name: images
+          path: |
+            ./dist/functions-runtime-image.tar/
+            ./dist/keptn-lifecycle-operator-image.tar/
+            ./dist/scheduler-image.tar/
+            
   security-scans:
     name: "Security Scans"
     needs: prepare-security-scans
@@ -63,6 +72,7 @@ jobs:
         include:
           - tool: "kics"
           - tool: "kubeconform"
+            version: "v0.4.13"
           - tool: "kubescape"
             kubescape-framework: "nsa"
           - tool: "kubescape"
@@ -83,7 +93,7 @@ jobs:
           submodules: 'true'
 
       - name: Download manifest files
-        id: download_helm_chart
+        id: download_manifests
         uses: actions/download-artifact@v3
         with:
           name: manifests
@@ -109,10 +119,19 @@ jobs:
         if: matrix.tool == 'kubeconform'
         run: |
           echo "::group::Kubeconform installation"
-          go install github.com/yannh/kubeconform/cmd/kubeconform@v0.4.13
+          go install github.com/yannh/kubeconform/cmd/kubeconform@${{ matrix.version }}
           echo "::endgroup::"
+          
+          cd operator/config/default
+          sed -i 's/\- ..\/crd//' kustomization.yaml && kustomize build ./ > /tmp/operator-manifest.yaml
+          cd ../crd && kustomize build ./ > /tmp/crds.yaml
+          cd ../../../scheduler/manifests/install && kustomize build ./ > /tmp/scheduler-manifest.yaml
 
-          kubeconform -schema-location default -summary scans
+          curl -s https://raw.githubusercontent.com/yannh/kubeconform/${{ matrix.version }}/scripts/openapi2jsonschema.py > /tmp/openapi2jsonschema.py
+          mkdir -p /tmp/schema && cd /tmp/schema
+          python3 ../openapi2jsonschema.py ../crds.yaml
+          cd .. && echo "---" >> operator-manifest.yaml && cat operator-manifest.yaml scheduler-manifest.yaml > manifest.yaml
+          kubeconform -schema-location default -schema-location './schema/{{ .ResourceKind }}_{{ .ResourceAPIVersion }}.json' -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/cert-manager.io/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json' -summary manifest.yaml
 
       - name: Kubescape Scan
         if: matrix.tool == 'kubescape'
@@ -124,6 +143,32 @@ jobs:
           echo "::endgroup::"
           # Docs on how to configure exceptions: https://hub.armosec.io/docs/exceptions
           kubescape scan framework ${{ matrix.kubescape-framework }} -v -t ${{ env.FAILURE_PERCENTAGE }} --exceptions ./.github/.kubescape/exceptions.json --controls-config ./.github/.kubescape/controls-inputs.json scans --enable-color
+          
+  trivy:
+    name: Trivy
+    runs-on: ubuntu-22.04
+    needs: prepare-security-scans
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - "functions-runtime"
+          - "keptn-lifecycle-operator"
+          - "scheduler"
+    steps:
+      - name: Download images
+        id: download_images
+        uses: actions/download-artifact@v3
+        with:
+          name: images
+          path: images
+
+      - name: Trivy image scan
+        uses: aquasecurity/trivy-action@0.8.0
+        with:
+          input: "images/${{ matrix.image }}-image.tar/${{ matrix.image }}-image.tar"
+          severity: 'CRITICAL,HIGH'
+          exit-code: '1'
 
   govulncheck:
     name: Govulncheck
